@@ -67,22 +67,7 @@ def optimize_stoc(theta, n_ab, N, M, n_iter):
         To_phi, Tm_phi, T_gamma, W2, xo, Permut = load_data(i,Lamb,Delta,M,N)
 
         g_theta = grad_theta(theta,n_ab, Permut, N, M, To_phi, Tm_phi, T_gamma, W2, xo)
-
-        if i<=100:
-            h_comput = 0
-            d_theta = g_theta
-        else:
-            H_theta = Hessian_theta(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo).reshape(theta.shape[0],theta.shape[0])
-            try:
-                L_theta = np.linalg.cholesky(H_theta)
-                d_temp = jnp.linalg.solve(L_theta,g_theta)
-                d_theta = jnp.linalg.solve(L_theta.T,d_temp)
-                h_comput = 1
-                print("PSD hessian!")
-            except:
-                h_comput = 0
-                d_theta = g_theta
-                print("Comming back to GD!")
+        d_theta = g_theta
 
         current_cost = eval_cost_func(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo)
 
@@ -100,10 +85,9 @@ def optimize_stoc(theta, n_ab, N, M, n_iter):
             new_cost = eval_cost_func(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo)
             return theta,new_cost
         
-        if h_comput:
-            if (d_theta.T@g_theta)<0.000001:
-                new_cost = eval_cost_func(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo)
-                return theta,new_cost
+        if (d_theta.T@g_theta)<0.000001:
+            new_cost = eval_cost_func(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo)
+            return theta,new_cost
         
     new_cost = eval_cost_func(theta,n_ab,Permut,N,M,To_phi, Tm_phi, T_gamma, W2, xo)
     return theta,new_cost
