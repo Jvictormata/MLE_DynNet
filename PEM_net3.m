@@ -31,8 +31,8 @@ est1 = oe(Z1, [nf nb nk])
 
 
 Z2 = iddata(y2,[r2+y1 y2+r3]);
-nf = [2 2]; 
-nb = [2 2];
+nf = [2 2];  %better result than [2 3]
+nb = [2 2];  %better result than [2 3]
 nc = [2];
 nd = [2];
 nk = [1 1];
